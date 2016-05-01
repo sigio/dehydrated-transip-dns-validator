@@ -97,14 +97,15 @@ if( $action === "deploy_challenge" )
 
             //Process Results
             $dns_result_count=$dns_result->count; // number of results returned
-            for ($a=0; $a<$dns_result_count; $a++)
+            if( $dns_result_count > 1)
             {
-                if ($dns_result->results[$a]->typeid=="TXT")
+                echo "Got back multiple results, please clean up your dns\n";
+            }
+            elseif( $dns_result_count == 1 )
+            {
+                if ( $tokenvalue == $dns_result->results[0]->data )
                 {
-                    if ( $tokenvalue == $dns_result->results[$a]->data )
-                    {
-                        $continue++;
-                    }
+                    $continue++;
                 }
             }
         }

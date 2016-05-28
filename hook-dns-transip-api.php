@@ -5,16 +5,15 @@
 // Include domainservice
 require_once('Transip/DomainService.php');
 require_once('dns.inc.php');
+require_once('config.inc.php');
 
 $action = $argv[1];     // Letsencrypt.sh hook action
 $domain = $argv[2];     // Full domain-name to work on
-// DNS Servers to check for records (public dns preferred)
-$dns_servers=array('ns0.transip.net', 'ns1.transip.nl', 'ns2.transip.eu');
 
-$ttl = "60";            // TTL For our acme record
-$sleeptime = "10";      // Time to wait between DNS checks
+$domains_pattern = implode("|", $my_domains);
+$domains_pattern = str_replace(".", "\.", $domains_pattern);
 
-$pattern = '/^((.*)\.)?(mydomain\.tld)$/x';   // Split up domain / subdomain
+$pattern = '/^((.*)\.)?(' . $domains_pattern . ')$/';
 
 if( preg_match($pattern, $argv[2], $matches ) )
 {

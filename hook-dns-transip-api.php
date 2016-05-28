@@ -81,9 +81,9 @@ if( $action === "deploy_challenge" )
         exit(1);
     }
 
+    $continue = 0;
     while( $continue < sizeof($dns_servers) )
-    {       
-        $continue = 0;
+    {
         foreach( $dns_servers as $dns_server)
         {
             $dns_query=new DNSQuery($dns_server);
@@ -114,6 +114,7 @@ if( $action === "deploy_challenge" )
         {
             echo "Result not ready, retrying in $sleeptime seconds\n";
             sleep($sleeptime);
+            $continue = 0;
         }
     }
 }
@@ -164,6 +165,6 @@ else
 {
     echo "Unknown action, '$action'";
 }
- 
+
 exit(0);
 ?>

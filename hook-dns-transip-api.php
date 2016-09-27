@@ -136,6 +136,7 @@ elseif( $action === "clean_challenge" )
 
     if( $found > 0)
     {
+        $dnsEntries = array_values($dnsEntries);
         try
         {
             // Commit the changes to the TransIP DNS servers

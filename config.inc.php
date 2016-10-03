@@ -1,9 +1,8 @@
 <?php
 
 $my_domains = array(
-    "hurrdurr.nl",
-    "oppai.nl",
-    "nekoconeko.nl"
+    "exampledomain.nl",
+    "otherdomain.nl"
 );
 
 // DNS Servers to check for records (public dns preferred)

@@ -11,8 +11,8 @@ Requirements/Preparations
   - Paste your api private key in Transip/ApiSettings.php
   - Update/Edit the regex 'pattern' in hook-dns-transip-api.php to match your domain(s)
 
-Testing:
-  dehydrated --cron --domain some.test.domain --hook hook-dns-transip-api.php --challenge dns-01
+Testing: 
+  - dehydrated --cron --domain some.test.domain --hook hook-dns-transip-api.php --challenge dns-01
 
 It's recommended to test against the staging-api for Letsencrypt, to do so, set
   CA="https://acme-staging.api.letsencrypt.org/directory"

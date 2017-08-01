@@ -161,6 +161,9 @@ elseif( $action === "deploy_cert" )
 elseif( $action === "unchanged_cert" )
 {
 }
+elseif( $action === "startup_hook" )
+{
+}
 else
 {
     echo "Unknown action, '$action'";

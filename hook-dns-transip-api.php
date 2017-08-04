@@ -7,42 +7,45 @@ require_once('Transip/DomainService.php');
 require_once('dns.inc.php');
 require_once('config.inc.php');
 
+echo (new DateTime)->format(DATE_RFC850)." Executing hook with params: ".implode(", ", $argv)."\n";
+
 $action = $argv[1];     // Letsencrypt.sh hook action
-$domain = $argv[2];     // Full domain-name to work on
+$domain = sizeof($argv) > 2 ? $argv[2] : null;     // Full domain-name to work on
+$zone = null;
 
 $domains_pattern = implode("|", $my_domains);
 $domains_pattern = str_replace(".", "\.", $domains_pattern);
 
 $pattern = '/^((.*)\.)?(' . $domains_pattern . ')$/';
 
-if( preg_match($pattern, $argv[2], $matches ) )
-{
-//  echo "Host-part: ", $matches[1], "\n";
-    $subdomain = $matches[2];
-    rtrim($subdomain, ".");
-//  echo "Domain-part: ", $matches[2], "\n";
-    $zone = $matches[3];
-}
-else
-{
-    echo "No domain-name and/or subdomain found\n";
-    exit(1);
-}
+if( $domain) {
+    if( preg_match($pattern, $argv[2], $matches ) )
+    {
+    //  echo "Host-part: ", $matches[1], "\n";
+        $subdomain = $matches[2];
+        rtrim($subdomain, ".");
+    //  echo "Domain-part: ", $matches[2], "\n";
+        $zone = $matches[3];
+    }
+    else
+    {
+        echo "No domain-name and/or subdomain found\n";
+        exit(1);
+    }
 
-// What record should we update
-if ( empty($subdomain))
-{
-    $acmedomain = "_acme-challenge";
-}
-else
-{
-    $acmedomain = "_acme-challenge.$subdomain";
-}
+    // What record should we update
+    if ( empty($subdomain))
+    {
+        $acmedomain = "_acme-challenge";
+    }
+    else
+    {
+        $acmedomain = "_acme-challenge.$subdomain";
+    }
 
-// Retrieve all DNS records for the zone
-$dnsEntries = Transip_DomainService::getInfo($zone)->dnsEntries;
-
-echo "Called with action: '$action', on zone '$zone' with domain '$domain', and subdomain '$subdomain'\n\n";
+    // Retrieve all DNS records for the zone
+    $dnsEntries = Transip_DomainService::getInfo($zone)->dnsEntries;
+}
 
 if( $action === "deploy_challenge" )
 {
@@ -162,6 +165,9 @@ elseif( $action === "unchanged_cert" )
 {
 }
 elseif( $action === "startup_hook" )
+{
+}
+elseif( $action === "exit_hook")
 {
 }
 else

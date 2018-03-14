@@ -167,12 +167,15 @@ elseif( $action === "unchanged_cert" )
 elseif( $action === "startup_hook" )
 {
 }
-elseif( $action === "exit_hook")
+elseif( $action === "exit_hook" )
+{
+}
+elseif( $action === "this_hookscript_is_broken__dehydrated_is_working_fine__please_ignore_unknown_hooks_in_your_script" )
 {
 }
 else
 {
-    echo "Unknown action, '$action'";
+    echo "Unknown hook action, '$action'";
 }
 
 exit(0);

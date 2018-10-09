@@ -55,21 +55,7 @@ if( $action === "deploy_challenge" )
 
     echo "DEPLOY_CHALLENGE with tokenvalue: '$tokenvalue' on zone: '$zone' and record: '$acmedomain'\n\n";
 
-    foreach ($dnsEntries as $key => $dnsEntry)
-    {
-        if($dnsEntry->name == "$acmedomain")
-        {
-//          echo "Key = ", $key, " Name = " , $dnsEntry->name, "\n";
-//          echo "Found _acme-challenge: ", $dnsEntry->content, "\n";
-            $dnsEntries[$key] = new Transip_DnsEntry("$acmedomain", $ttl, Transip_DnsEntry::TYPE_TXT, $tokenvalue);
-            $found++;
-        }
-    }
-
-    if ( $found == 0 )
-    {
-        $dnsEntries[] = new Transip_DnsEntry("$acmedomain", 300, Transip_DnsEntry::TYPE_TXT, $tokenvalue);
-    }
+    $dnsEntries[] = new Transip_DnsEntry("$acmedomain", $ttl, Transip_DnsEntry::TYPE_TXT, $tokenvalue);
 
     try
     {
@@ -99,16 +85,15 @@ if( $action === "deploy_challenge" )
 
             //Process Results
             $dns_result_count=$dns_result->count; // number of results returned
-            if( $dns_result_count > 1)
+            if( $dns_result_count >= 1) // Allow for multiple results
             {
-                echo "Got back multiple results, please clean up your dns\n";
-            }
-            elseif( $dns_result_count == 1 )
-            {
-                if ( $tokenvalue == $dns_result->results[0]->data )
-                {
-                    $continue++;
-                }
+		    foreach( $dns_result->results as $dns_txt )
+		    {
+			if ( $tokenvalue == $dns_txt->data )
+        	        {
+                	    $continue++;
+			}
+		    }
             }
         }
 

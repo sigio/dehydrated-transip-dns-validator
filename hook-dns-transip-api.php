@@ -18,6 +18,16 @@ $domains_pattern = str_replace(".", "\.", $domains_pattern);
 
 $pattern = '/^((.*)\.)?(' . $domains_pattern . ')$/';
 
+if( $action === "deploy_cert" )
+{
+    $file1 = $argv[3];
+    $file2 = $argv[4];
+
+    $result = `cat "$file1" "$file2" > "$(dirname "$file1")/privcert.pem"`;
+
+    exit(0);
+}
+
 if( $domain) {
     if( preg_match($pattern, $argv[2], $matches ) )
     {
@@ -53,23 +63,7 @@ if( $action === "deploy_challenge" )
     $tokenvalue = $argv[4];
     $found = 0;
 
-    echo "DEPLOY_CHALLENGE with tokenvalue: '$tokenvalue' on zone: '$zone' and record: '$acmedomain'\n\n";
-
-    foreach ($dnsEntries as $key => $dnsEntry)
-    {
-        if($dnsEntry->name == "$acmedomain")
-        {
-//          echo "Key = ", $key, " Name = " , $dnsEntry->name, "\n";
-//          echo "Found _acme-challenge: ", $dnsEntry->content, "\n";
-            $dnsEntries[$key] = new Transip_DnsEntry("$acmedomain", $ttl, Transip_DnsEntry::TYPE_TXT, $tokenvalue);
-            $found++;
-        }
-    }
-
-    if ( $found == 0 )
-    {
-        $dnsEntries[] = new Transip_DnsEntry("$acmedomain", 300, Transip_DnsEntry::TYPE_TXT, $tokenvalue);
-    }
+    $dnsEntries[] = new Transip_DnsEntry("$acmedomain", $ttl, Transip_DnsEntry::TYPE_TXT, $tokenvalue);
 
     try
     {
@@ -116,9 +110,11 @@ if( $action === "deploy_challenge" )
         {
             echo "Result not ready, retrying in $sleeptime seconds\n";
             sleep($sleeptime);
-            $continue = 0;
+            $continue++;
         }
     }
+    echo "Sleeping an additional 10 minutes";
+    sleep(600);
 }
 elseif( $action === "clean_challenge" )
 {
@@ -130,8 +126,6 @@ elseif( $action === "clean_challenge" )
     {
         if($dnsEntry->name == "$acmedomain")
         {
-//          echo "Key = ", $key, " Name = " , $dnsEntry->name, "\n";
-//          echo "Found _acme-challenge: ", $dnsEntry->content, "\n";
             unset($dnsEntries[$key]);
             $found++;
         }
@@ -157,9 +151,6 @@ elseif( $action === "clean_challenge" )
         echo "No need to update, record not found\n";
         exit(0);
     }
-}
-elseif( $action === "deploy_cert" )
-{
 }
 elseif( $action === "unchanged_cert" )
 {

@@ -108,13 +108,13 @@ if( $action === "deploy_challenge" )
 
         if ($continue < sizeof($dns_servers) )
         {
-            echo "Result not ready, retrying in $sleeptime seconds\n";
+            echo "Result not ready, retrying in $sleeptime seconds, waiting for DNS record to become known.\n";
             sleep($sleeptime);
             $continue++;
         }
     }
-    echo "Sleeping an additional 10 minutes";
-    sleep(600);
+    echo "Sleeping an additional 5 minute, waiting for DNS record to become known.";
+    sleep(300);
 }
 elseif( $action === "clean_challenge" )
 {
